@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>TouchWrite promo</title>
+<style>
+  :root { --cjk: "Noto Sans TC"; --accent: #0A84FF; --violet: #5E5CE6; }
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+  #stage {
+    position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden;
+    background: #06060a; color: #fff;
+    font-family: "Segoe UI Variable Text", "Segoe UI", var(--cjk), sans-serif;
+    -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+  }
+  .layer { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  .abs { position: absolute; }
+  .cjk { font-family: var(--cjk), sans-serif; }
+  .display { font-family: "Segoe UI Variable Display", "Segoe UI", var(--cjk), sans-serif; }
+  .icon-font { font-family: "Segoe Fluent Icons", "Segoe MDL2 Assets"; }
+  .ch { display: inline-block; white-space: pre; }
+  .line { white-space: nowrap; }
+  .grad { color: transparent; -webkit-background-clip: text; background-clip: text; }
+
+  /* ---------- background ---------- */
+  .blob { position: absolute; border-radius: 50%; }
+  #grain { position: absolute; inset: 0; opacity: .07; mix-blend-mode: overlay; pointer-events: none; }
+  #vignette { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 75% 70% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+  #black { position: absolute; inset: 0; background: #000; pointer-events: none; }
+
+  /* ---------- TouchWrite panel (native sizes from WritingWindow.xaml) ---------- */
+  .panel { position: absolute; width: 586px; border-radius: 22px; transform-origin: 0 0;
+    background: linear-gradient(rgba(48,48,54,.95), rgba(30,30,34,.95));
+    border: 1px solid rgba(255,255,255,.22);
+    box-shadow: 0 40px 90px rgba(0,0,0,.55), 0 10px 30px rgba(0,0,0,.35);
+    font-family: var(--cjk), sans-serif; }
+  .p-head { height: 40px; display: flex; align-items: center; padding: 2px 18px 0; box-sizing: border-box; }
+  .p-dot { width: 8px; height: 8px; border-radius: 50%; background: #30D158; }
+  .p-title { margin-left: 8px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.95); }
+  .p-rec { margin-left: auto; font-size: 11px; color: rgba(255,255,255,.5); }
+  .p-frame { margin: 0 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,.13); background: rgba(255,255,255,.08); overflow: hidden; }
+  .p-pad { position: relative; width: 560px; height: 345px; }
+  .p-strip { position: absolute; left: 0; top: 0; width: 560px; height: 69px; background: rgba(255,255,255,.06); }
+  .p-strip::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgba(255,255,255,.15); }
+  .p-grid { position: absolute; left: 4px; top: 4px; width: 468px; height: 61px; display: grid; grid-auto-flow: column; }
+  .p-ph { position: absolute; left: 0; top: 0; width: 476px; height: 69px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(255,255,255,.3); }
+  .p-bscol { position: absolute; right: 0; top: 0; width: 84px; height: 69px; }
+  .p-bscol::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 1px; background: rgba(255,255,255,.15); }
+  .p-bskey { position: absolute; left: 6px; top: 6px; right: 6px; bottom: 6px; border-radius: 9px; background: rgba(255,255,255,.08);
+    display: flex; align-items: center; justify-content: center; font-family: "Segoe Fluent Icons", "Segoe MDL2 Assets"; font-size: 20px; color: rgba(255,255,255,.9); }
+  .p-hint { position: absolute; left: 0; right: 0; top: 69px; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; color: rgba(255,255,255,.25); }
+  .p-ink { position: absolute; left: 0; top: 0; width: 560px; height: 345px; overflow: visible; }
+  .p-dots { position: absolute; inset: 0; }
+  .p-cdot { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; background: rgba(10,132,255,.33); }
+  .p-ring { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; border: 2px solid rgba(120,180,255,.9); box-sizing: border-box; }
+  .p-foot { display: flex; justify-content: center; flex-wrap: wrap; padding: 10px 18px 14px; font-size: 11px; color: rgba(255,255,255,.6); }
+  .p-fi { margin: 0 6px; } .p-fk { color: rgba(255,255,255,.9); }
+  .p-cell { position: relative; margin: 2px; border-radius: 9px; }
+  .p-num { position: absolute; left: 6px; top: 3px; font-size: 10px; color: rgba(255,255,255,.55); font-family: "Segoe UI", sans-serif; }
+  .p-c { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 29px; color: #fff; }
+
+  /* ---------- editor window ---------- */
+  .editor { position: absolute; width: 780px; height: 420px; border-radius: 12px; overflow: hidden; transform-origin: 0 0;
+    background: #fbfbfd; color: #1b1b1f; box-shadow: 0 40px 90px rgba(0,0,0,.5), 0 10px 30px rgba(0,0,0,.3), 0 0 0 1px rgba(255,255,255,.08);
+    font-family: var(--cjk), sans-serif; }
+  .e-bar { height: 46px; display: flex; align-items: center; padding: 0 0 0 18px; background: #eef0f4; font-size: 14px; color: #2a2a2e; font-family: "Segoe UI Variable Text", "Segoe UI", var(--cjk); }
+  .e-doc { font-family: "Segoe Fluent Icons"; font-size: 15px; color: #0A63C9; margin-right: 12px; }
+  .e-ctl { margin-left: auto; display: flex; }
+  .e-ctl span { width: 54px; text-align: center; font-family: "Segoe Fluent Icons"; font-size: 11px; color: #333; }
+  .e-menu { height: 38px; display: flex; align-items: center; gap: 26px; padding: 0 22px; font-size: 14px; color: #333; border-bottom: 1px solid #e6e7ea; background: #f7f8fa; }
+  .e-body { position: relative; padding: 34px 40px; font-size: 76px; line-height: 1.2; font-weight: 500; letter-spacing: 2px; }
+  .e-char { display: inline-block; transform-origin: 50% 70%; }
+  .e-caret { display: inline-block; width: 4px; height: 80px; margin-left: 4px; vertical-align: -10px; background: #0A84FF; border-radius: 2px; }
+
+  /* ---------- touchpad ---------- */
+  .tp-wrap { position: absolute; perspective: 1500px; }
+  .tp { position: relative; width: 640px; height: 394px; border-radius: 30px; transform-origin: 50% 0;
+    background: linear-gradient(160deg, #3a3b42 0%, #2a2b31 45%, #232429 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), inset 0 -1px 0 rgba(0,0,0,.5), 0 0 0 2px #17181c, 0 0 0 3px rgba(255,255,255,.07), 0 60px 80px rgba(0,0,0,.6); }
+  .tp-sheen { position: absolute; inset: 0; border-radius: 30px; background: linear-gradient(115deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 38%, rgba(255,255,255,0) 62%, rgba(255,255,255,.05) 100%); }
+  .tp svg { position: absolute; inset: 0; width: 640px; height: 394px; overflow: visible; }
+  .finger { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.98) 0 13%, rgba(150,200,255,.75) 24%, rgba(10,132,255,.32) 45%, rgba(10,132,255,0) 70%); }
+  .ripple { position: absolute; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; border: 3px solid rgba(140,195,255,.8); box-sizing: border-box; }
+
+  /* ---------- captions ---------- */
+  .head { font-family: var(--cjk), sans-serif; font-weight: 800; letter-spacing: -1px; line-height: 1.16; }
+  .desc { font-family: var(--cjk), sans-serif; font-weight: 400; color: rgba(255,255,255,.62); line-height: 1.6; }
+
+  /* ---------- gesture cards ---------- */
+  .card { position: absolute; width: 470px; height: 480px; border-radius: 28px; box-sizing: border-box;
+    background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.03));
+    border: 1px solid rgba(255,255,255,.12); box-shadow: 0 30px 70px rgba(0,0,0,.35); }
+  .mini { position: absolute; left: 45px; top: 45px; width: 380px; height: 234px; border-radius: 22px;
+    background: linear-gradient(160deg, #3a3b42, #25262b); box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 0 0 2px #17181c, 0 20px 40px rgba(0,0,0,.4); }
+  .mini svg { position: absolute; inset: 0; width: 380px; height: 234px; }
+  .mdot { position: absolute; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.98) 0 14%, rgba(150,200,255,.7) 26%, rgba(10,132,255,.28) 48%, rgba(10,132,255,0) 70%); }
+  .keycap { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: 9px; font-size: 20px; font-weight: 600;
+    font-family: "Segoe UI Variable Text", "Segoe UI"; color: #fff; background: rgba(255,255,255,.1);
+    box-shadow: inset 0 -3px 0 rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.18), 0 0 0 1px rgba(255,255,255,.14); }
+
+  /* ---------- feature chips / screenshots ---------- */
+  .chip { position: absolute; height: 64px; display: flex; align-items: center; padding: 0 28px 0 20px; border-radius: 32px; white-space: nowrap;
+    background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)); border: 1px solid rgba(255,255,255,.14);
+    font-family: var(--cjk), sans-serif; font-size: 26px; font-weight: 500; box-shadow: 0 16px 40px rgba(0,0,0,.3); }
+  .chip .ico { width: 40px; height: 40px; border-radius: 50%; margin-right: 16px; display: flex; align-items: center; justify-content: center;
+    font-family: "Segoe Fluent Icons"; font-size: 19px; background: linear-gradient(135deg, #0A84FF, #5E5CE6); }
+  .shot { position: absolute; border-radius: 12px; overflow: hidden; box-shadow: 0 50px 110px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1); }
+  .shot img { display: block; width: 100%; height: 100%; }
+</style>
+<script src="strokes.js"></script>
+</head>
+<body>
+<div id="stage"></div>
+<script src="promo.js"></script>
+</body>
+</html>

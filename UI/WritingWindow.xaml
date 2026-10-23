@@ -1,0 +1,98 @@
+<Window x:Class="TouchWrite.UI.WritingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TouchWrite"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        Focusable="False"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display"
+        FontFamily="Microsoft JhengHei UI, Microsoft YaHei UI, Segoe UI">
+
+    <Grid x:Name="Root" Margin="28" Opacity="0">
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="RootShift" Y="12" />
+        </Grid.RenderTransform>
+
+        <Border x:Name="Shell" CornerRadius="22" BorderThickness="1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#F2303036" Offset="0" />
+                    <GradientStop Color="#F21E1E22" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+            <Border.BorderBrush>
+                <SolidColorBrush Color="#38FFFFFF" />
+            </Border.BorderBrush>
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="32" ShadowDepth="8" Direction="270" Opacity="0.45" Color="Black" />
+            </Border.Effect>
+
+            <StackPanel>
+                <!-- Header -->
+                <Grid Margin="18,12,18,10">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse x:Name="LiveDot" Width="8" Height="8" Fill="#30D158" VerticalAlignment="Center" />
+                        <TextBlock Text="觸控板手寫" Foreground="#F2FFFFFF" FontSize="13" FontWeight="SemiBold"
+                                   Margin="8,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <TextBlock x:Name="RecognizerLabel" HorizontalAlignment="Right" VerticalAlignment="Center"
+                               Foreground="#80FFFFFF" FontSize="11" TextTrimming="CharacterEllipsis" MaxWidth="320" />
+                </Grid>
+
+                <!-- The pad: maps 1:1 to the touchpad surface -->
+                <Border x:Name="PadFrame" Margin="12,0,12,0" CornerRadius="14" BorderThickness="1"
+                        Background="#14FFFFFF" BorderBrush="#22FFFFFF" ClipToBounds="True">
+                    <Grid x:Name="Pad">
+                        <!-- Candidate strip (top of the touchpad) -->
+                        <Grid x:Name="CandidateStrip" VerticalAlignment="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition x:Name="BackspaceColumn" Width="80" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.ColumnSpan="2" Background="#0FFFFFFF" />
+                            <Border Grid.ColumnSpan="2" VerticalAlignment="Bottom" Height="1" Background="#26FFFFFF" />
+                            <TextBlock x:Name="CandidatePlaceholder" Text="候選字會顯示在這裡 · 輕點觸控板頂部選字"
+                                       Foreground="#4DFFFFFF" FontSize="12"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <UniformGrid x:Name="CandidateGrid" Rows="1" Margin="4" Tag="NoLoc" />
+
+                            <!-- Delete key: the top-right corner of the touchpad -->
+                            <Border Grid.Column="1" Width="1" HorizontalAlignment="Left" Margin="0,10" Background="#26FFFFFF" />
+                            <Border x:Name="BackspaceKey" Grid.Column="1" Margin="6" CornerRadius="9" Background="#14FFFFFF">
+                                <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE750;" FontSize="20"
+                                           Foreground="#E6FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
+
+                        <!-- Writing area hint -->
+                        <TextBlock x:Name="WritingHint" Text="用一根手指在觸控板上書寫"
+                                   Foreground="#40FFFFFF" FontSize="15"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                        <Canvas x:Name="FadeHost" IsHitTestVisible="False" />
+                        <Canvas x:Name="InkLayer" IsHitTestVisible="False" />
+                        <Canvas x:Name="ContactLayer" IsHitTestVisible="False" />
+                    </Grid>
+                </Border>
+
+                <!-- Gesture help -->
+                <WrapPanel Margin="18,10,18,14" HorizontalAlignment="Center" TextElement.FontSize="11"
+                           TextElement.Foreground="#99FFFFFF">
+                    <TextBlock Margin="6,0"><Run Foreground="#E6FFFFFF" Text="右上角 ⌫" /> 刪除</TextBlock>
+                    <TextBlock Margin="6,0"><Run Foreground="#E6FFFFFF" Text="兩指 →" /> 空格</TextBlock>
+                    <TextBlock Margin="6,0"><Run Foreground="#E6FFFFFF" Text="兩指 ↓" /> 換行</TextBlock>
+                    <TextBlock Margin="6,0"><Run Foreground="#E6FFFFFF" Text="兩指 ↑" /> 撤銷筆劃</TextBlock>
+                    <TextBlock Margin="6,0"><Run Foreground="#E6FFFFFF" Text="1–9" /> 選字</TextBlock>
+                    <TextBlock Margin="6,0"><Run Foreground="#E6FFFFFF" Text="Esc" /> 退出</TextBlock>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,10 @@
+﻿bin/
+obj/
+.vs/
+dist/
+*.user
+
+# Promo videos are over GitHub's 100 MB file limit; rebuild them with promo\build.ps1
+promo/out/*.mp4
+promo/tools/*/bin/
+promo/tools/*/obj/
