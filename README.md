@@ -70,3 +70,7 @@ TouchWrite.exe --preview 面板.png   # 把手寫面板畫成圖片
 | `HandwritingController.cs` | 手勢判斷、自動上字、候選字替換 |
 | `UI/WritingWindow.xaml` | 不搶焦點的手寫面板 |
 | `App.xaml.cs` | 系統匣、快捷鍵、設定、診斷模式 |
+
+## 授權
+
+[MIT](LICENSE)
